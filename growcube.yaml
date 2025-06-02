@@ -1,7 +1,7 @@
 esphome:
   name: growcube
   platform: ESP8266
-  board: nodemcuv2 
+  board: nodemcuv2
   on_boot:
     then:
       # read the RTC time once when the system boots
@@ -28,16 +28,16 @@ wifi:
     password: "oarcosWoKlMv"
 
 captive_portal:
-    
-    
-    
-    
+
+
+
+
 i2c:
   sda: GPIO14  # Adjust based on your ESP8266 pinout
   scl: GPIO12  # 12 SURE
   scan: True  # Automatically scan for devices on the I2C bus
-  
-    
+
+
 # Example configuration entry
 time:
   - platform: ds1307
@@ -58,64 +58,64 @@ sensor:
   - platform: ads1115
     multiplexer: 'A0_GND'
     gain: 6.144
-    name: "Soil sensor - D" 
+    name: "Soil sensor - D"
     unit_of_measurement: '%'
     filters:
     - calibrate_linear:
         - 2.17 -> 0.00      # Calibrate Min in dry soil
-        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil 
+        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil
     - lambda: |
         if (x < 0) return 0;
         else if (x > 100) return 100;
         else return (x);
-    accuracy_decimals: 0    
-    
-    
+    accuracy_decimals: 0
+
+
   - platform: ads1115
     multiplexer: 'A1_GND'
     gain: 6.144
-    name: "Soil sensor - B" 
+    name: "Soil sensor - B"
     unit_of_measurement: '%'
     filters:
     - calibrate_linear:
         - 2.17 -> 0.00      # Calibrate Min in dry soil
-        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil 
+        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil
     - lambda: |
         if (x < 0) return 0;
         else if (x > 100) return 100;
         else return (x);
-    accuracy_decimals: 0    
-       
+    accuracy_decimals: 0
+
   - platform: ads1115
     multiplexer: 'A2_GND'
     gain: 6.144
-    name: "Soil sensor - C" 
+    name: "Soil sensor - C"
     unit_of_measurement: '%'
     filters:
     - calibrate_linear:
         - 2.17 -> 0.00      # Calibrate Min in dry soil
-        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil 
+        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil
     - lambda: |
         if (x < 0) return 0;
         else if (x > 100) return 100;
         else return (x);
-    accuracy_decimals: 0    
-       
+    accuracy_decimals: 0
+
   - platform: ads1115
     multiplexer: 'A3_GND'
     gain: 6.144
-    name: "Soil sensor - A" 
+    name: "Soil sensor - A"
     unit_of_measurement: '%'
     filters:
     - calibrate_linear:
         - 2.17 -> 0.00      # Calibrate Min in dry soil
-        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil 
+        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil
     - lambda: |
         if (x < 0) return 0;
         else if (x > 100) return 100;
         else return (x);
-    accuracy_decimals: 0    
-           
+    accuracy_decimals: 0
+
   - platform: ina219
     address: 0x40
     shunt_resistance: 0.1 ohm
@@ -129,8 +129,8 @@ sensor:
       name: "INA219 Shunt Voltage"
     max_voltage: 32.0V
     max_current: 3.2A
-    update_interval: 2s    
-    
+    update_interval: 2s
+
   - platform: aht10
     variant: AHT20
     temperature:
@@ -138,15 +138,15 @@ sensor:
     humidity:
       name: "GrowCube Humidity"
     update_interval: 60s
-    
+
 pca9554:
   id: 'pca9554a_device'
-  pin_count: 16 
+  pin_count: 16
   address: 0x20  # Default I2C address for PCF9555
 
 
 
-      
+
 switch:
   # PCF9555 Pin #0 to #15
   - platform: gpio
@@ -291,5 +291,4 @@ switch:
       number: 15
       mode:
         output: true
-      inverted: false      
-      
+      inverted: false
