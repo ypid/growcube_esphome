@@ -1,0 +1,8 @@
+sensor:
+  - platform: aht10
+    variant: AHT20
+    temperature:
+      name: "GrowCube Temperature"
+    humidity:
+      name: "GrowCube Humidity"
+    update_interval: 60s

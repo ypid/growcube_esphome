@@ -1,294 +1,34 @@
-esphome:
-  name: growcube
-  platform: ESP8266
-  board: nodemcuv2
-  on_boot:
-    then:
-      # read the RTC time once when the system boots
-      ds1307.read_time:
-
-# Enable logging
-logger:
-
 # Enable Home Assistant API
 api:
-  password: "1ASD"
+  encryption:
+    # CHANGEME: https://esphome.io/components/api.html
+    key: "tWiyI7cNKbY4XxrksezT/2CoAauZOKeQpZn84NPuTlw="
 
 ota:
   - platform: esphome
     password: "1ASD"
 
+substitutions:
+  name: "growcube"
+  friendly_name: "GrowCube"
+
 wifi:
   ssid: "your wifi ssid"
   password: "your wifi password"
 
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "Growcube Fallback Hotspot"
-    password: "oarcosWoKlMv"
+# Enable this if you want to use the files from your local git checkout:
+# packages:
+#   board: !include packages/elecrow_growcube_esp8266_board.yaml
+#   board_debug: !include packages/elecrow_growcube_board_debug.yaml
+#   sensor_ads1115: !include packages/sensor_ads1115.yaml
+#   sensor_aht20: !include packages/sensor_aht20.yaml
+#   sensor_ina219: !include packages/sensor_ina219.yaml
+#   time_ds1307: !include packages/time_ds1307.yaml
 
-captive_portal:
-
-
-
-
-i2c:
-  sda: GPIO14  # Adjust based on your ESP8266 pinout
-  scl: GPIO12  # 12 SURE
-  scan: True  # Automatically scan for devices on the I2C bus
-
-
-# Example configuration entry
-time:
-  - platform: ds1307
-    # repeated synchronization is not necessary unless the external RTC
-    # is much more accurate than the internal clock
-    update_interval: never
-  - platform: homeassistant
-    # instead try to synchronize via network repeatedly ...
-    on_time_sync:
-      then:
-        # ... and update the RTC when the synchronization was successful
-        ds1307.write_time:
-
-
-ads1115:
-  - address: 0x48
-sensor:
-  - platform: ads1115
-    multiplexer: 'A0_GND'
-    gain: 6.144
-    name: "Soil sensor - D"
-    unit_of_measurement: '%'
-    filters:
-    - calibrate_linear:
-        - 2.17 -> 0.00      # Calibrate Min in dry soil
-        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil
-    - lambda: |
-        if (x < 0) return 0;
-        else if (x > 100) return 100;
-        else return (x);
-    accuracy_decimals: 0
-
-
-  - platform: ads1115
-    multiplexer: 'A1_GND'
-    gain: 6.144
-    name: "Soil sensor - B"
-    unit_of_measurement: '%'
-    filters:
-    - calibrate_linear:
-        - 2.17 -> 0.00      # Calibrate Min in dry soil
-        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil
-    - lambda: |
-        if (x < 0) return 0;
-        else if (x > 100) return 100;
-        else return (x);
-    accuracy_decimals: 0
-
-  - platform: ads1115
-    multiplexer: 'A2_GND'
-    gain: 6.144
-    name: "Soil sensor - C"
-    unit_of_measurement: '%'
-    filters:
-    - calibrate_linear:
-        - 2.17 -> 0.00      # Calibrate Min in dry soil
-        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil
-    - lambda: |
-        if (x < 0) return 0;
-        else if (x > 100) return 100;
-        else return (x);
-    accuracy_decimals: 0
-
-  - platform: ads1115
-    multiplexer: 'A3_GND'
-    gain: 6.144
-    name: "Soil sensor - A"
-    unit_of_measurement: '%'
-    filters:
-    - calibrate_linear:
-        - 2.17 -> 0.00      # Calibrate Min in dry soil
-        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil
-    - lambda: |
-        if (x < 0) return 0;
-        else if (x > 100) return 100;
-        else return (x);
-    accuracy_decimals: 0
-
-  - platform: ina219
-    address: 0x40
-    shunt_resistance: 0.1 ohm
-    current:
-      name: "INA219 Current"
-    power:
-      name: "INA219 Power"
-    bus_voltage:
-      name: "INA219 Bus Voltage"
-    shunt_voltage:
-      name: "INA219 Shunt Voltage"
-    max_voltage: 32.0V
-    max_current: 3.2A
-    update_interval: 2s
-
-  - platform: aht10
-    variant: AHT20
-    temperature:
-      name: "GrowCube Temperature"
-    humidity:
-      name: "GrowCube Humidity"
-    update_interval: 60s
-
-pca9554:
-  id: 'pca9554a_device'
-  pin_count: 16
-  address: 0x20  # Default I2C address for PCF9555
-
-
-
-
-switch:
-  # PCF9555 Pin #0 to #15
-  - platform: gpio
-    name: "PCF9555 Pin #0"
-    pin:
-      pca9554: pca9554a_device
-      number: 0
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "Buzzer"
-    pin:
-      pca9554: pca9554a_device
-      number: 1
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "Red LED"
-    pin:
-      pca9554: pca9554a_device
-      number: 2
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "Blue LED"
-    pin:
-      pca9554: pca9554a_device
-      number: 3
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "PCF9555 Pin #4"
-    pin:
-      pca9554: pca9554a_device
-      number: 4
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "Micro Pump"
-    pin:
-      pca9554: pca9554a_device
-      number: 5
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "Selonoid A"
-    pin:
-      pca9554: pca9554a_device
-      number: 6
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "Selonoid B"
-    pin:
-      pca9554: pca9554a_device
-      number: 7
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "PCF9555 Pin #8"
-    pin:
-      pca9554: pca9554a_device
-      number: 8
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "Selonoid C"
-    pin:
-      pca9554: pca9554a_device
-      number: 9
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "Selonoid D"
-    pin:
-      pca9554: pca9554a_device
-      number: 10
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "PCF9555 Pin #11"
-    pin:
-      pca9554: pca9554a_device
-      number: 11
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "PCF9555 Pin #12"
-    pin:
-      pca9554: pca9554a_device
-      number: 12
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "PCF9555 Pin #13"
-    pin:
-      pca9554: pca9554a_device
-      number: 13
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "PCF9555 Pin #14"
-    pin:
-      pca9554: pca9554a_device
-      number: 14
-      mode:
-        output: true
-      inverted: false
-
-  - platform: gpio
-    name: "PCF9555 Pin #15"
-    pin:
-      pca9554: pca9554a_device
-      number: 15
-      mode:
-        output: true
-      inverted: false
+packages:
+  board: github://MakersFunDuck/ESPhome-port-for-GrowCube-Plant-Watering-System-Garden---Smart-Watering-System/packages/elecrow_growcube_esp8266_board.yaml
+  board_debug: github://MakersFunDuck/ESPhome-port-for-GrowCube-Plant-Watering-System-Garden---Smart-Watering-System/packages/elecrow_growcube_board_debug.yaml
+  sensor_ads1115: github://MakersFunDuck/ESPhome-port-for-GrowCube-Plant-Watering-System-Garden---Smart-Watering-System/packages/sensor_ads1115.yaml
+  sensor_aht20: github://MakersFunDuck/ESPhome-port-for-GrowCube-Plant-Watering-System-Garden---Smart-Watering-System/packages/sensor_aht20.yaml
+  sensor_ina219: github://MakersFunDuck/ESPhome-port-for-GrowCube-Plant-Watering-System-Garden---Smart-Watering-System/packages/sensor_ina219.yaml
+  time_ds1307: github://MakersFunDuck/ESPhome-port-for-GrowCube-Plant-Watering-System-Garden---Smart-Watering-System/packages/time_ds1307.yaml

@@ -1,0 +1,64 @@
+ads1115:
+  - address: 0x48
+
+sensor:
+  - platform: ads1115
+    multiplexer: 'A0_GND'
+    gain: 6.144
+    name: "Soil sensor - D"
+    unit_of_measurement: '%'
+    filters:
+    - calibrate_linear:
+        - 2.17 -> 0.00      # Calibrate Min in dry soil
+        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil
+    - lambda: |
+        if (x < 0) return 0;
+        else if (x > 100) return 100;
+        else return (x);
+    accuracy_decimals: 0
+
+
+  - platform: ads1115
+    multiplexer: 'A1_GND'
+    gain: 6.144
+    name: "Soil sensor - B"
+    unit_of_measurement: '%'
+    filters:
+    - calibrate_linear:
+        - 2.17 -> 0.00      # Calibrate Min in dry soil
+        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil
+    - lambda: |
+        if (x < 0) return 0;
+        else if (x > 100) return 100;
+        else return (x);
+    accuracy_decimals: 0
+
+  - platform: ads1115
+    multiplexer: 'A2_GND'
+    gain: 6.144
+    name: "Soil sensor - C"
+    unit_of_measurement: '%'
+    filters:
+    - calibrate_linear:
+        - 2.17 -> 0.00      # Calibrate Min in dry soil
+        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil
+    - lambda: |
+        if (x < 0) return 0;
+        else if (x > 100) return 100;
+        else return (x);
+    accuracy_decimals: 0
+
+  - platform: ads1115
+    multiplexer: 'A3_GND'
+    gain: 6.144
+    name: "Soil sensor - A"
+    unit_of_measurement: '%'
+    filters:
+    - calibrate_linear:
+        - 2.17 -> 0.00      # Calibrate Min in dry soil
+        - 4.96 -> 100.00     # Calibrate MAX in 100% wet soil
+    - lambda: |
+        if (x < 0) return 0;
+        else if (x > 100) return 100;
+        else return (x);
+    accuracy_decimals: 0

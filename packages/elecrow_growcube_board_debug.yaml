@@ -1,0 +1,72 @@
+switch:
+  - platform: gpio
+    name: "PCF9555 Pin #0"
+    pin:
+      pca9554: pca9554a_device
+      number: 0
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "PCF9555 Pin #4"
+    pin:
+      pca9554: pca9554a_device
+      number: 4
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "PCF9555 Pin #8"
+    pin:
+      pca9554: pca9554a_device
+      number: 8
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "PCF9555 Pin #11"
+    pin:
+      pca9554: pca9554a_device
+      number: 11
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "PCF9555 Pin #12"
+    pin:
+      pca9554: pca9554a_device
+      number: 12
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "PCF9555 Pin #13"
+    pin:
+      pca9554: pca9554a_device
+      number: 13
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "PCF9555 Pin #14"
+    pin:
+      pca9554: pca9554a_device
+      number: 14
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "PCF9555 Pin #15"
+    pin:
+      pca9554: pca9554a_device
+      number: 15
+      mode:
+        output: true
+      inverted: false

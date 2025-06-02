@@ -1,0 +1,102 @@
+substitutions:
+  config_version: 0.1.0
+
+esphome:
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+
+  project:
+    name: MakersFunDuck.elecrow_growcube
+    version: "$config_version"
+  min_version: 2025.2.0
+
+esp8266:
+  board: nodemcuv2
+  framework:
+    version: recommended
+
+# Enable logging
+logger:
+
+i2c:
+  sda: GPIO14  # Adjust based on your ESP8266 pinout
+  scl: GPIO12  # 12 SURE
+  scan: True  # Automatically scan for devices on the I2C bus
+
+pca9554:
+  id: 'pca9554a_device'
+  pin_count: 16
+  address: 0x20  # Default I2C address for PCF9555
+
+switch:
+  - platform: gpio
+    name: "Buzzer"
+    pin:
+      pca9554: pca9554a_device
+      number: 1
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "Red LED"
+    pin:
+      pca9554: pca9554a_device
+      number: 2
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "Blue LED"
+    pin:
+      pca9554: pca9554a_device
+      number: 3
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "Micro Pump"
+    pin:
+      pca9554: pca9554a_device
+      number: 5
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "Selonoid A"
+    pin:
+      pca9554: pca9554a_device
+      number: 6
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "Selonoid B"
+    pin:
+      pca9554: pca9554a_device
+      number: 7
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "Selonoid C"
+    pin:
+      pca9554: pca9554a_device
+      number: 9
+      mode:
+        output: true
+      inverted: false
+
+  - platform: gpio
+    name: "Selonoid D"
+    pin:
+      pca9554: pca9554a_device
+      number: 10
+      mode:
+        output: true
+      inverted: false

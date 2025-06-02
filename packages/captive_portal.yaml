@@ -1,0 +1,8 @@
+wifi:
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Growcube Fallback Hotspot"
+    password: "oarcosWoKlMv"
+
+# https://esphome.io/components/captive_portal.html
+captive_portal:
