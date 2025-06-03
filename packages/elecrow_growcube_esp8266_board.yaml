@@ -66,7 +66,7 @@ switch:
       inverted: false
 
   - platform: gpio
-    name: "Selonoid A"
+    name: "Valve A"
     pin:
       pca9554: pca9554a_device
       number: 6
@@ -75,7 +75,7 @@ switch:
       inverted: false
 
   - platform: gpio
-    name: "Selonoid B"
+    name: "Valve B"
     pin:
       pca9554: pca9554a_device
       number: 7
@@ -84,7 +84,7 @@ switch:
       inverted: false
 
   - platform: gpio
-    name: "Selonoid C"
+    name: "Valve C"
     pin:
       pca9554: pca9554a_device
       number: 9
@@ -93,7 +93,7 @@ switch:
       inverted: false
 
   - platform: gpio
-    name: "Selonoid D"
+    name: "Valve D"
     pin:
       pca9554: pca9554a_device
       number: 10
