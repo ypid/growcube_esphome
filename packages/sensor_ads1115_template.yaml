@@ -1,0 +1,16 @@
+sensor:
+  - platform: ads1115
+    multiplexer: 'A${adc_channel}_GND'
+    gain: 6.144
+    name: "Soil Moisture ${channel}"
+    unit_of_measurement: '%'
+    filters:
+      - calibrate_linear:
+          method: least_squares
+          datapoints:
+            - ${soil_moisture_calibration_${channel}_min}
+            - ${soil_moisture_calibration_${channel}_max}
+      - clamp:
+          min_value: 0
+          max_value: 100
+    accuracy_decimals: 0

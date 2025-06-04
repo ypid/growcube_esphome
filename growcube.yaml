@@ -12,6 +12,18 @@ substitutions:
   name: "growcube"
   friendly_name: "GrowCube"
 
+  # Calibrate min in dry soil.
+  soil_moisture_calibration_A_min: '2.17 -> 0.00'
+  # Calibrate max in 100% wet soil.
+  soil_moisture_calibration_A_max: '4.96 -> 100.00'
+
+  soil_moisture_calibration_B_min: '2.17 -> 0.00'
+  soil_moisture_calibration_B_max: '4.96 -> 100.00'
+  soil_moisture_calibration_C_min: '2.17 -> 0.00'
+  soil_moisture_calibration_C_max: '4.96 -> 100.00'
+  soil_moisture_calibration_D_min: '2.17 -> 0.00'
+  soil_moisture_calibration_D_max: '4.96 -> 100.00'
+
 wifi:
   ssid: "your wifi ssid"
   password: "your wifi password"
