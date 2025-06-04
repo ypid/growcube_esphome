@@ -14,3 +14,9 @@ sensor:
           min_value: 0
           max_value: 100
     accuracy_decimals: 0
+
+  - platform: ads1115
+    multiplexer: 'A${adc_channel}_GND'
+    gain: 6.144
+    name: "Soil Moisture ${channel} Raw"
+    entity_category: diagnostic
