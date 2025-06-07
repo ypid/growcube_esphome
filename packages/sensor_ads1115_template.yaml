@@ -1,10 +1,34 @@
 sensor:
+
   - platform: ads1115
+    id: 'soil_moisture_${channel}_fast'
+    internal: true
     multiplexer: 'A${adc_channel}_GND'
     gain: 6.144
+
+    # Fast updates to catch and report when the sensor gets disconnected.
+    update_interval: 500ms
+
+  # Needed to derive calibration values so this raw value is enabled by default
+  # but put into the diagnostic category.
+  - platform: template
+    name: "Soil Moisture ${channel} Raw"
+    id: 'soil_moisture_${channel}_raw'
+    entity_category: diagnostic
+    state_class: "measurement"
+    icon: mdi:water
+    update_interval: never
+    lambda: 'return id(soil_moisture_${channel}_fast).state;'
+
+  - platform: copy
+    source_id: 'soil_moisture_${channel}_fast'
     name: "Soil Moisture ${channel}"
     unit_of_measurement: '%'
+    device_class: "moisture"
+    state_class: "measurement"
+    icon: mdi:water-percent
     filters:
+      - throttle_average: 1min
       - calibrate_linear:
           method: least_squares
           datapoints:
@@ -15,8 +39,22 @@ sensor:
           max_value: 100
     accuracy_decimals: 0
 
-  - platform: ads1115
-    multiplexer: 'A${adc_channel}_GND'
-    gain: 6.144
-    name: "Soil Moisture ${channel} Raw"
+binary_sensor:
+  - platform: template
+    name: "Soil Moisture ${channel} disconnected"
+    id: 'soil_moisture_${channel}_disconnected'
+    device_class: "problem"
+    icon: mdi:thermometer-probe
     entity_category: diagnostic
+    condition:
+      sensor.in_range:
+        id: 'soil_moisture_${channel}_fast'
+        below: 1
+
+# TODO: It is unclear how the stock firmware detects a faulty sensor.
+
+button:
+  - id: !extend 'update_readings'
+    on_press:
+      then:
+        - component.update: soil_moisture_${channel}_raw

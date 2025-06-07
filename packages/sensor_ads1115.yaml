@@ -1,6 +1,36 @@
 ads1115:
   - address: 0x48
 
+button:
+  - platform: template
+    name: Update raw readings
+    id: 'update_readings'
+    entity_category: diagnostic
+
+# TODO: Allow to trigger calibration from Home Assistant and write calibration
+# value to EEPROM instead of hard-coding into the firmware? I would be
+# interested in example code if anyone else has done something like this
+# already. Calibration could be triggered using a select like like this:
+# select:
+#   - platform: template
+#     name: Calibrate moisture sensor
+#     id: mode
+#     options:
+#      - "Sensor A min"
+#      - "Sensor A max"
+#      - "Sensor B min"
+#      - "..."
+
+esphome:
+  on_boot:
+    # Update raw readings once on boot to not let them stay "Unkown".
+    # The user might have alerts that trigger on unknown values.
+    - priority: 1500
+      then:
+        # TODO: Is there a better hook to avoid this delay?
+        - delay: 2s
+        - button.press: update_readings
+
 packages:
   soil_moisture_channel_a: !include
     file: sensor_ads1115_template.yaml
