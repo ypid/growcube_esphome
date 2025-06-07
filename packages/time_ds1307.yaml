@@ -1,8 +1,9 @@
 esphome:
   on_boot:
-    then:
-      # read the RTC time once when the system boots
-      ds1307.read_time:
+    - priority: 1000
+      then:
+        # read the RTC time once when the system boots
+        ds1307.read_time:
 
 time:
   - platform: ds1307
