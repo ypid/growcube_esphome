@@ -7,6 +7,7 @@ switch:
       mode:
         output: true
       inverted: false
+    entity_category: diagnostic
 
   - platform: gpio
     name: "PCF9555 Pin #4"
@@ -16,6 +17,7 @@ switch:
       mode:
         output: true
       inverted: false
+    entity_category: diagnostic
 
   - platform: gpio
     name: "PCF9555 Pin #8"
@@ -25,6 +27,7 @@ switch:
       mode:
         output: true
       inverted: false
+    entity_category: diagnostic
 
   - platform: gpio
     name: "PCF9555 Pin #11"
@@ -34,6 +37,7 @@ switch:
       mode:
         output: true
       inverted: false
+    entity_category: diagnostic
 
   - platform: gpio
     name: "PCF9555 Pin #12"
@@ -43,6 +47,7 @@ switch:
       mode:
         output: true
       inverted: false
+    entity_category: diagnostic
 
   - platform: gpio
     name: "PCF9555 Pin #13"
@@ -52,6 +57,7 @@ switch:
       mode:
         output: true
       inverted: false
+    entity_category: diagnostic
 
   - platform: gpio
     name: "PCF9555 Pin #14"
@@ -61,6 +67,7 @@ switch:
       mode:
         output: true
       inverted: false
+    entity_category: diagnostic
 
   - platform: gpio
     name: "PCF9555 Pin #15"
@@ -70,3 +77,4 @@ switch:
       mode:
         output: true
       inverted: false
+    entity_category: diagnostic
