@@ -29,7 +29,7 @@ sensor:
       then:
         - sensor.template.publish:
             id: 'soil_moisture_${channel}'
-            state: !lambda 'return id(soil_moisture_${channel}).state;'
+            state: !lambda 'return id(soil_moisture_${channel}_filtered).state;'
 
   - platform: template
     id: 'soil_moisture_${channel}'

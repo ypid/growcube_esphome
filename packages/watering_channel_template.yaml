@@ -1,0 +1,44 @@
+switch:
+  - platform: gpio
+    id: 'valve_${channel}_internal'
+    pin:
+      pca9554: pca9554a_device
+      number: '${io_expander_pin_number}'
+      mode:
+        output: true
+      inverted: false
+    restore_mode: ALWAYS_OFF
+    on_turn_on:
+      - switch.turn_on: pump
+    on_turn_off:
+      - switch.turn_off: pump
+
+  # Switches that can be locked by conditions need to be implemented using a
+  # template switch like below.
+  # Ref: https://github.com/esphome/esphome/pull/3493
+  - platform: template
+    name: "Water ${channel}"
+    id: 'water_${channel}'
+    # entity_category: diagnostic
+    icon: mdi:valve
+    # or mdi:watering-can
+    lambda: |-
+      return id(valve_${channel}_internal).state;
+    turn_on_action:
+      - if:
+          condition:
+            - or:
+              - and:
+                - switch.is_on: strict_mode
+                - binary_sensor.is_off: any_pump_problem
+                - binary_sensor.is_off: 'soil_moisture_${channel}_disconnected'
+              - switch.is_off: strict_mode
+          then:
+            - if:
+                condition:
+                  binary_sensor.is_on: any_pump_problem
+                then:
+                  - button.press: acknowledge_pump_problems
+            - switch.turn_on: 'valve_${channel}_internal'
+    turn_off_action:
+      - switch.turn_off: 'valve_${channel}_internal'

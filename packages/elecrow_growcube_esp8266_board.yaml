@@ -17,6 +17,7 @@ esp8266:
 
 # Enable logging
 logger:
+  # level: INFO
 
 i2c:
   sda: GPIO14  # Adjust based on your ESP8266 pinout
@@ -31,72 +32,199 @@ pca9554:
 switch:
   - platform: gpio
     name: "Buzzer"
+    id: buzzer
     pin:
       pca9554: pca9554a_device
       number: 1
       mode:
         output: true
       inverted: false
+    entity_category: diagnostic
 
+  # Call them "LED $color" instead of "$color LED" so that they sort better in
+  # Home Assistant.
   - platform: gpio
-    name: "Red LED"
+    name: "LED Red"
+    id: led_red
     pin:
       pca9554: pca9554a_device
       number: 2
       mode:
         output: true
       inverted: false
-
+    entity_category: diagnostic
   - platform: gpio
-    name: "Blue LED"
+    name: "LED Blue"
+    id: led_blue
     pin:
       pca9554: pca9554a_device
       number: 3
       mode:
         output: true
       inverted: false
+    entity_category: diagnostic
 
   - platform: gpio
     name: "Micro Pump"
+    id: pump
+    internal: true
     pin:
       pca9554: pca9554a_device
       number: 5
       mode:
         output: true
       inverted: false
+    entity_category: diagnostic
+    icon: mdi:water-pump
+    restore_mode: ALWAYS_OFF
 
-  - platform: gpio
-    name: "Valve A"
-    pin:
-      pca9554: pca9554a_device
-      number: 6
-      mode:
-        output: true
-      inverted: false
+  - platform: template
+    # Block pump:
+    # * Until problem was acknowledged by user.
+    # * Soil sensor is connected.
+    name: Strict mode
+    id: strict_mode
+    restore_mode: RESTORE_DEFAULT_ON
+    optimistic: True
+    entity_category: config
 
-  - platform: gpio
-    name: "Valve B"
-    pin:
-      pca9554: pca9554a_device
-      number: 7
-      mode:
-        output: true
-      inverted: false
+sensor:
+  - platform: duty_time
+    id: pump_work_time
+    name: Pump work time
+    lambda: "return id(pump).state;"
+    restore: true
 
-  - platform: gpio
-    name: "Valve C"
-    pin:
-      pca9554: pca9554a_device
-      number: 9
-      mode:
-        output: true
-      inverted: false
+packages:
+  watering_channel_a: !include
+    file: watering_channel_template.yaml
+    vars:
+      io_expander_pin_number: 6
+      channel: A
+  watering_channel_B: !include
+    file: watering_channel_template.yaml
+    vars:
+      io_expander_pin_number: 7
+      channel: B
+  watering_channel_C: !include
+    file: watering_channel_template.yaml
+    vars:
+      io_expander_pin_number: 9
+      channel: C
+  watering_channel_D: !include
+    file: watering_channel_template.yaml
+    vars:
+      io_expander_pin_number: 10
+      channel: D
 
-  - platform: gpio
-    name: "Valve D"
-    pin:
-      pca9554: pca9554a_device
-      number: 10
-      mode:
-        output: true
-      inverted: false
+button:
+  - platform: template
+    name: Acknowledge Pump Problems
+    id: 'acknowledge_pump_problems'
+    entity_category: config
+    icon: 'mdi:check-all'
+    on_press:
+      - binary_sensor.template.publish:
+          id: water_empty
+          state: OFF
+      - binary_sensor.template.publish:
+          id: pump_overload
+          state: OFF
+
+binary_sensor:
+  - platform: template
+    name: "Water Empty"
+    id: 'water_empty'
+    device_class: "problem"
+    icon: mdi:water-alert-outline
+    condition:
+      or:
+        - binary_sensor.is_on: water_empty
+        - all:
+            - switch.is_on: 'pump'
+            - sensor.in_range:
+                id: 'pump_current'
+                below: 0.16
+                # Pump draws up to 0.08 A when running with one valve opened and only air is in the system.
+                # Pump draws up to 0.13 A when running with all valves closed and only air is in the system.
+                # Pump draws at least 0.23 A when running with one valve opened and water is in the system.
+    filters:
+      - delayed_on: 3s
+    on_press:
+      then:
+        # - switch.turn_off: pump
+        - switch.turn_off: water_A
+        - switch.turn_off: water_B
+        - switch.turn_off: water_C
+        - switch.turn_off: water_D
+        # - sprinkler.shutdown: sprinkler_controller
+  - platform: template
+    name: "Pump Overload"
+    id: 'pump_overload'
+    device_class: "problem"
+    icon: mdi:alert-circle
+    condition:
+      - all:
+          - switch.is_on: 'pump'
+          - sensor.in_range:
+              id: 'pump_current'
+              above: 0.340
+              # Power draw goes up to 0.350 A with water and open valve when the pipe gets blocked.
+              # When the pipe gets fully blocked, current goes to 0.450 A and the pump stops turning.
+    on_press:
+      then:
+        # - switch.turn_off: pump
+        - switch.turn_off: water_A
+        - switch.turn_off: water_B
+        - switch.turn_off: water_C
+        - switch.turn_off: water_D
+        # - sprinkler.shutdown: sprinkler_controller
+
+        - switch.turn_on: buzzer
+        - delay: 2s
+        - switch.turn_off: buzzer
+  - platform: template
+    id: 'any_pump_problem'
+    internal: true
+    device_class: "problem"
+    icon: mdi:alert
+    condition:
+      or:
+        - binary_sensor.is_on: water_empty
+        - binary_sensor.is_on: pump_overload
+  - platform: template
+    id: 'any_problem'
+    internal: true
+    device_class: "problem"
+    icon: mdi:alert
+    condition:
+      or:
+        - binary_sensor.is_on: any_pump_problem
+        - binary_sensor.is_on: soil_moisture_A_disconnected
+        - binary_sensor.is_on: soil_moisture_B_disconnected
+        - binary_sensor.is_on: soil_moisture_C_disconnected
+        - binary_sensor.is_on: soil_moisture_D_disconnected
+    on_press:
+      - switch.turn_on: led_red
+    on_release:
+      - switch.turn_off: led_red
+
+# Using the sprinkler controller seems to complicated?
+# sprinkler:
+#   - id: sprinkler_controller
+#     main_switch: "Watering Active"
+#     auto_advance_switch: "Watering Auto Advance"
+#     reverse_switch: "Watering Reverse Order"
+#     standby_switch: "Watering Standby"
+#     valve_overlap: 1s
+#     valves:
+#       - enable_switch: "Enable Water A"
+#         valve_switch: "Water A"
+#         pump_switch_id: pump
+#         run_duration: 5s
+#         valve_switch_id: valve_A
+#       - enable_switch: "Enable Water B"
+#         valve_switch: "Water B"
+#         pump_switch_id: pump
+#         run_duration: 5s
+#         valve_switch_id: valve_B

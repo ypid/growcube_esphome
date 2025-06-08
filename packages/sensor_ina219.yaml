@@ -3,11 +3,15 @@ sensor:
     address: 0x40
     shunt_resistance: 0.1 ohm
     current:
-      name: "INA219 Current"
+      name: "Pump Current"
+      id: pump_current
+      entity_category: diagnostic
     power:
-      name: "INA219 Power"
+      name: "Pump Power"
+      entity_category: diagnostic
     bus_voltage:
-      name: "INA219 Bus Voltage"
+      name: "Pump Voltage"
+      entity_category: diagnostic
     max_voltage: 32.0V
     max_current: 3.2A
-    update_interval: 2s
+    update_interval: 100ms
