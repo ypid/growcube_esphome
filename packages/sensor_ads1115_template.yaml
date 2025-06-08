@@ -22,13 +22,23 @@ sensor:
 
   - platform: copy
     source_id: 'soil_moisture_${channel}_fast'
+    id: 'soil_moisture_${channel}_filtered'
+    filters:
+      - throttle_average: 1min
+    on_value:
+      then:
+        - sensor.template.publish:
+            id: 'soil_moisture_${channel}'
+            state: !lambda 'return id(soil_moisture_${channel}).state;'
+
+  - platform: template
+    id: 'soil_moisture_${channel}'
     name: "Soil Moisture ${channel}"
     unit_of_measurement: '%'
     device_class: "moisture"
     state_class: "measurement"
     icon: mdi:water-percent
     filters:
-      - throttle_average: 1min
       - calibrate_linear:
           method: least_squares
           datapoints:
@@ -58,3 +68,7 @@ button:
     on_press:
       then:
         - component.update: soil_moisture_${channel}_raw
+        # Skip throttle_average:
+        - sensor.template.publish:
+            id: 'soil_moisture_${channel}'
+            state: !lambda 'return id(soil_moisture_${channel}_fast).state;'

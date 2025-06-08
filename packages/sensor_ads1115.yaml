@@ -3,9 +3,10 @@ ads1115:
 
 button:
   - platform: template
-    name: Update raw readings
+    name: Update readings
     id: 'update_readings'
     entity_category: diagnostic
+    icon: 'mdi:update'
 
 # TODO: Allow to trigger calibration from Home Assistant and write calibration
 # value to EEPROM instead of hard-coding into the firmware? I would be
