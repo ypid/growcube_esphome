@@ -1,0 +1,27 @@
+# https://esphome.io/components/deep_sleep.html
+# TODO: Check "Next, tell the node how it should wakeup. On the ESP8266, you
+# can only put the node into deep sleep for a duration using sleep_duration,
+# note that on the ESP8266 GPIO16 must be connected to the RST pin so that it
+# will wake up again."
+# Deep sleep does not work without GPIO16.
+# Relays stay engaged during deep sleep.
+deep_sleep:
+  id: deep_sleep_control
+
+  # For testing.
+  sleep_duration: 1min
+
+debug:
+text_sensor:
+  - platform: debug
+    reset_reason:
+      name: "Reset Reason"
+
+button:
+  - platform: template
+    name: Deep Sleep
+    id: deep_sleep_trigger_via_api
+    entity_category: diagnostic
+    on_press:
+      - deep_sleep.enter:
+          id: deep_sleep_control
