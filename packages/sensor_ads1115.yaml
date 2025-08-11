@@ -3,7 +3,7 @@ ads1115:
 
 button:
   - platform: template
-    name: Update readings
+    name: Update Readings
     id: 'update_readings'
     entity_category: diagnostic
     icon: 'mdi:update'

@@ -82,7 +82,7 @@ switch:
     # Block pump:
     # * Until problem was acknowledged by user.
     # * Soil sensor is connected.
-    name: Strict mode
+    name: Strict Mode
     id: strict_mode
     restore_mode: RESTORE_DEFAULT_ON
     optimistic: True
@@ -91,7 +91,7 @@ switch:
 sensor:
   - platform: duty_time
     id: pump_work_time
-    name: Pump work time
+    name: Pump Work Time
     lambda: "return id(pump).state;"
     restore: true
 

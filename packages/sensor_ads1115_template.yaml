@@ -52,7 +52,7 @@ sensor:
 
 binary_sensor:
   - platform: template
-    name: "Soil Moisture ${channel} disconnected"
+    name: "Soil Moisture ${channel} Disconnected"
     id: 'soil_moisture_${channel}_disconnected'
     device_class: "problem"
     icon: mdi:thermometer-probe
