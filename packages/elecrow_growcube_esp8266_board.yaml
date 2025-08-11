@@ -101,21 +101,25 @@ packages:
     vars:
       io_expander_pin_number: 6
       channel: A
+      channel_name: ${channel_A_name}
   watering_channel_B: !include
     file: watering_channel_template.yaml
     vars:
       io_expander_pin_number: 7
       channel: B
+      channel_name: ${channel_B_name}
   watering_channel_C: !include
     file: watering_channel_template.yaml
     vars:
       io_expander_pin_number: 9
       channel: C
+      channel_name: ${channel_C_name}
   watering_channel_D: !include
     file: watering_channel_template.yaml
     vars:
       io_expander_pin_number: 10
       channel: D
+      channel_name: ${channel_D_name}
 
 button:
   - platform: template

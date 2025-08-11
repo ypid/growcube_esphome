@@ -12,7 +12,7 @@ sensor:
   # Needed to derive calibration values so this raw value is enabled by default
   # but put into the diagnostic category.
   - platform: template
-    name: "Soil Moisture ${channel} Raw"
+    name: "Moisture ${channel} ${channel_name} Raw"
     id: 'soil_moisture_${channel}_raw'
     accuracy_decimals: 3
     entity_category: diagnostic
@@ -34,7 +34,7 @@ sensor:
 
   - platform: template
     id: 'soil_moisture_${channel}'
-    name: "Soil Moisture ${channel}"
+    name: "Moisture ${channel} ${channel_name}"
     unit_of_measurement: '%'
     device_class: "moisture"
     state_class: "measurement"
@@ -52,7 +52,7 @@ sensor:
 
 binary_sensor:
   - platform: template
-    name: "Soil Moisture ${channel} Disconnected"
+    name: "Moisture ${channel} ${channel_name} Disconnected"
     id: 'soil_moisture_${channel}_disconnected'
     device_class: "problem"
     icon: mdi:thermometer-probe

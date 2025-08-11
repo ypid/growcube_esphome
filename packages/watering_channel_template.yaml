@@ -17,7 +17,7 @@ switch:
   # template switch like below.
   # Ref: https://github.com/esphome/esphome/pull/3493
   - platform: template
-    name: "Water ${channel}"
+    name: "Water ${channel} ${channel_name}"
     id: 'water_${channel}'
     # entity_category: diagnostic
     icon: mdi:valve

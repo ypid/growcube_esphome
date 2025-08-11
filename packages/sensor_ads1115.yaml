@@ -38,18 +38,22 @@ packages:
     vars:
       adc_channel: 3
       channel: A
+      channel_name: ${channel_A_name}
   soil_moisture_channel_b: !include
     file: sensor_ads1115_template.yaml
     vars:
       adc_channel: 1
       channel: B
+      channel_name: ${channel_B_name}
   soil_moisture_channel_c: !include
     file: sensor_ads1115_template.yaml
     vars:
       adc_channel: 2
       channel: C
+      channel_name: ${channel_C_name}
   soil_moisture_channel_d: !include
     file: sensor_ads1115_template.yaml
     vars:
       adc_channel: 0
       channel: D
+      channel_name: ${channel_D_name}

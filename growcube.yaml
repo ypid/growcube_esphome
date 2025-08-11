@@ -12,6 +12,14 @@ substitutions:
   name: "growcube"
   friendly_name: "GrowCube"
 
+  # If you want to name the soil moisture sensors more percisely in case the
+  # watering channels water multiple plants, rename the entity in your Home
+  # Automation Hub.
+  channel_A_name: 'Salt'
+  channel_B_name: 'Chives'
+  channel_C_name: 'Tomatos'
+  channel_D_name: 'Pineapple'
+
   # Calibrate min in dry soil.
   soil_moisture_calibration_A_min: '2.17 -> 0.00'
   # Calibrate max in 100% wet soil.
