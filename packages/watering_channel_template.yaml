@@ -42,3 +42,11 @@ switch:
             - switch.turn_on: 'valve_${channel}_internal'
     turn_off_action:
       - switch.turn_off: 'valve_${channel}_internal'
+
+sensor:
+
+  - platform: duty_time
+    id: water_${channel}_work_time
+    name: Water ${channel} ${channel_name} Work Time
+    lambda: "return id(water_${channel}).state;"
+    restore: true
