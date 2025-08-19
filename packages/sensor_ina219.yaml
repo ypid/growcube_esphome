@@ -2,16 +2,29 @@ sensor:
   - platform: ina219
     address: 0x40
     shunt_resistance: 0.1 ohm
+    update_interval: 100ms
+
+    max_voltage: 12.5
+    max_current: 0.75
+    # Pump is rated with up to 6 watt (DPW-04)
+    # https://en.kelimotor.com/applist_detail/224.html
+
     current:
       name: "Pump Current"
       id: pump_current
       entity_category: diagnostic
+      filters:
+        - clamp:
+            min_value: 0
     power:
       name: "Pump Power"
       entity_category: diagnostic
+      filters:
+        - clamp:
+            min_value: 0
     bus_voltage:
       name: "Pump Voltage"
       entity_category: diagnostic
-    max_voltage: 32.0V
-    max_current: 3.2A
-    update_interval: 100ms
+      filters:
+        - clamp:
+            min_value: 0
