@@ -8,10 +8,6 @@ switch:
         output: true
       inverted: false
     restore_mode: ALWAYS_OFF
-    on_turn_on:
-      - switch.turn_on: pump
-    on_turn_off:
-      - switch.turn_off: pump
 
   # Switches that can be locked by conditions need to be implemented using a
   # template switch like below.
@@ -50,3 +46,9 @@ sensor:
     name: Water ${channel} ${channel_name} Work Time
     lambda: "return id(water_${channel}).state;"
     restore: true
+
+binary_sensor:
+  - id: !extend 'any_valve_open'
+    condition:
+      or:
+        - switch.is_on: 'valve_${channel}_internal'

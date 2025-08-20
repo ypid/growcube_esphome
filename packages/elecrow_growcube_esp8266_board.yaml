@@ -197,6 +197,13 @@ binary_sensor:
         - binary_sensor.is_on: water_empty
         - binary_sensor.is_on: pump_overload
   - platform: template
+    id: 'any_valve_open'
+    internal: true
+    on_press:
+      - switch.turn_on: pump
+    on_release:
+      - switch.turn_off: pump
+  - platform: template
     id: 'any_problem'
     internal: true
     device_class: "problem"
