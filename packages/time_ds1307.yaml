@@ -7,10 +7,12 @@ esphome:
 
 time:
   - platform: ds1307
+    id: ds1307_time
     # repeated synchronization is not necessary unless the external RTC
     # is much more accurate than the internal clock
     update_interval: never
   - platform: homeassistant
+    id: homeassistant_time
     # instead try to synchronize via network repeatedly ...
     on_time_sync:
       then:
