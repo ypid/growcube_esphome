@@ -14,12 +14,13 @@ switch:
   # Ref: https://github.com/esphome/esphome/pull/3493
   - platform: template
     name: "Water ${channel} ${channel_name}"
-    id: 'water_${channel}'
+    id: 'water_${channel}_before_safety_checks'
     # entity_category: diagnostic
     icon: mdi:valve
     # or mdi:watering-can
     lambda: |-
-      return id(valve_${channel}_internal).state;
+      return id(water_${channel}_real).state;
+    # optimistic: true
     turn_on_action:
       - if:
           condition:
@@ -30,13 +31,23 @@ switch:
                 - binary_sensor.is_off: 'soil_moisture_${channel}_disconnected'
               - switch.is_off: strict_mode
           then:
-            - if:
-                condition:
-                  binary_sensor.is_on: any_pump_problem
-                then:
-                  - button.press: acknowledge_pump_problems
-            - switch.turn_on: 'valve_${channel}_internal'
+            - switch.turn_on: 'water_${channel}_real'
     turn_off_action:
+      - switch.turn_off: 'water_${channel}_real'
+
+  - platform: template
+    id: 'water_${channel}_real'
+    internal: true
+    optimistic: true
+    turn_on_action:
+      - switch.turn_on: 'valve_${channel}_internal'
+    turn_off_action:
+      # Prevent "water hammer" effect by ensuring pump had time to turn off
+      # before valve gets closed.
+      # Duration is just a guess. It was choocen to be long enough so that
+      # humans can hear the two clicks and know that the pump was turned off
+      # first.
+      - delay: 200ms
       - switch.turn_off: 'valve_${channel}_internal'
 
 sensor:
@@ -44,11 +55,11 @@ sensor:
   - platform: duty_time
     id: water_${channel}_work_time
     name: Water ${channel} ${channel_name} Work Time
-    lambda: "return id(water_${channel}).state;"
+    lambda: "return id(water_${channel}_real).state;"
     restore: true
 
 binary_sensor:
-  - id: !extend 'any_valve_open'
+  - id: !extend 'any_water_channel_open'
     condition:
       or:
-        - switch.is_on: 'valve_${channel}_internal'
+        - switch.is_on: 'water_${channel}_real'
