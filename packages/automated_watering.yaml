@@ -1,0 +1,97 @@
+time:
+  - id: !extend homeassistant_time
+    timezone: "$timezone"
+    on_time:
+      -
+      # Fail-safe: Enable automatic watering each morning for the case were
+      # automated watering was turned of and conncetion to Home Automation is
+      # lost.
+      # This is considered better autonomous behaviour.
+        hours: 7
+        minutes: 50
+        seconds: 0
+        then:
+          - switch.turn_on: auto_water_A
+          - switch.turn_on: auto_water_B
+          - switch.turn_on: auto_water_C
+          - switch.turn_on: auto_water_D
+
+api:
+  # Extend reboot timeout from default 15min to 23h so that the device can
+  # still do a full cycle of automated watering each day even if Home Assistant
+  # is not available.
+  # With the default value, the ESP might reboot in the middle of automated
+  # watering and after the reboot, watering will not be continued for that day.
+  reboot_timeout: 23h
+
+script:
+
+  - id: !extend emergency_off
+    then:
+      - script.stop: automated_watering
+
+  - id: automated_watering
+    then:
+      - lambda: |-
+          ESP_LOGD("lambda", "Start irrigation");
+
+      - if:
+          condition:
+            - and:
+              - switch.is_on: 'auto_water_A'
+              - sensor.in_range:
+                  id: 'soil_moisture_A'
+                  below: "${channel_A_soil_below}"
+          then:
+            - switch.turn_on: 'water_A_before_safety_checks'
+            - delay: "${channel_A_run_duration}"
+            - switch.turn_off: 'water_A_before_safety_checks'
+
+      - delay: 300ms
+
+      - if:
+          condition:
+            - and:
+              - switch.is_on: 'auto_water_B'
+              - sensor.in_range:
+                  id: 'soil_moisture_B'
+                  below: "${channel_B_soil_below}"
+          then:
+            - switch.turn_on: 'water_B_before_safety_checks'
+            - delay: "${channel_B_run_duration}"
+            - switch.turn_off: 'water_B_before_safety_checks'
+
+      - delay: 300ms
+
+      - if:
+          condition:
+            - and:
+              - switch.is_on: 'auto_water_C'
+              - sensor.in_range:
+                  id: 'soil_moisture_C'
+                  below: "${channel_C_soil_below}"
+          then:
+            - switch.turn_on: 'water_C_before_safety_checks'
+            - delay: "${channel_C_run_duration}"
+            - switch.turn_off: 'water_C_before_safety_checks'
+
+      - delay: 300ms
+
+      - if:
+          condition:
+            - and:
+              - switch.is_on: 'auto_water_D'
+              - sensor.in_range:
+                  id: 'soil_moisture_D'
+                  below: "${channel_D_soil_below}"
+          then:
+            - switch.turn_on: 'water_D_before_safety_checks'
+            - delay: "${channel_D_run_duration}"
+            - switch.turn_off: 'water_D_before_safety_checks'
+
+button:
+  - platform: template
+    name: Automated watering
+    icon: 'mdi:format-list-numbered'
+    on_press:
+      - script.execute: automated_watering

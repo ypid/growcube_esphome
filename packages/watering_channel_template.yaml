@@ -50,6 +50,14 @@ switch:
       - delay: 200ms
       - switch.turn_off: 'valve_${channel}_internal'
 
+  - platform: template
+    name: "Auto Water ${channel} ${channel_name}"
+    id: 'auto_water_${channel}'
+    entity_category: config
+    icon: mdi:arrow-decision-auto
+    optimistic: true
+    restore_mode: ALWAYS_ON
+
 sensor:
 
   - platform: duty_time

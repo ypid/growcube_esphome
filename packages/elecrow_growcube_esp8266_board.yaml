@@ -239,7 +239,9 @@ binary_sensor:
     on_release:
       - switch.turn_off: pump
 
-# Using the sprinkler controller seems to complicated?
+# TODO: Switch to sprinkler because without it, ./automated_watering.yaml is
+# very complicated if we want to leave the pump running while switching from
+# channel A to B.
 # sprinkler:
 #   - id: sprinkler_controller
 #     main_switch: "Watering Active"

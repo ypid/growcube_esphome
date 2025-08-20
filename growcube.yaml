@@ -8,6 +8,10 @@ ota:
   - platform: esphome
     password: "1ASD"
 
+wifi:
+  ssid: "your wifi ssid"
+  password: "your wifi password"
+
 substitutions:
   name: "growcube"
   friendly_name: "GrowCube"
@@ -19,6 +23,16 @@ substitutions:
   channel_B_name: 'Chives'
   channel_C_name: 'Tomatos'
   channel_D_name: 'Pineapple'
+
+  channel_A_run_duration: '4.5min'
+  channel_B_run_duration: '5min'
+  channel_C_run_duration: '7min'
+  channel_D_run_duration: '2min'
+
+  channel_A_soil_below: '45'
+  channel_B_soil_below: '45'
+  channel_C_soil_below: '40'
+  channel_D_soil_below: '80'
 
   # Calibrate min in dry soil.
   soil_moisture_calibration_A_min: '2.17 -> 0.00'
@@ -32,9 +46,16 @@ substitutions:
   soil_moisture_calibration_D_min: '2.17 -> 0.00'
   soil_moisture_calibration_D_max: '4.96 -> 100.00'
 
-wifi:
-  ssid: "your wifi ssid"
-  password: "your wifi password"
+time:
+  - id: !extend homeassistant_time
+    timezone: "$timezone"
+    on_time:
+      -
+        hours: 21
+        minutes: 0
+        seconds: 0
+        then:
+          - script.execute: automated_watering
 
 # Enable this if you want to use the files from your local git checkout:
 # packages:
@@ -44,6 +65,7 @@ wifi:
 #   sensor_aht20: !include packages/sensor_aht20.yaml
 #   sensor_ina219: !include packages/sensor_ina219.yaml
 #   time_ds1307: !include packages/time_ds1307.yaml
+#   automated_watering: !include packages/automated_watering.yaml
 
 packages:
   board: github://MakersFunDuck/ESPhome-port-for-GrowCube-Plant-Watering-System-Garden---Smart-Watering-System/packages/elecrow_growcube_esp8266_board.yaml
@@ -52,3 +74,4 @@ packages:
   sensor_aht20: github://MakersFunDuck/ESPhome-port-for-GrowCube-Plant-Watering-System-Garden---Smart-Watering-System/packages/sensor_aht20.yaml
   sensor_ina219: github://MakersFunDuck/ESPhome-port-for-GrowCube-Plant-Watering-System-Garden---Smart-Watering-System/packages/sensor_ina219.yaml
   time_ds1307: github://MakersFunDuck/ESPhome-port-for-GrowCube-Plant-Watering-System-Garden---Smart-Watering-System/packages/time_ds1307.yaml
+  automated_watering: github://MakersFunDuck/ESPhome-port-for-GrowCube-Plant-Watering-System-Garden---Smart-Watering-System/packages/automated_watering.yaml
