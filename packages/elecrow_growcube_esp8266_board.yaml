@@ -185,7 +185,7 @@ binary_sensor:
         # - sprinkler.shutdown: sprinkler_controller
 
         - switch.turn_on: buzzer
-        - delay: 2s
+        - delay: 1s
         - switch.turn_off: buzzer
   - platform: template
     id: 'any_pump_problem'
