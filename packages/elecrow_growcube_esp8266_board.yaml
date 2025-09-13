@@ -41,29 +41,6 @@ switch:
       inverted: false
     entity_category: diagnostic
 
-  # Call them "LED $color" instead of "$color LED" so that they sort better in
-  # Home Assistant.
-  - platform: gpio
-    name: "LED Red"
-    id: led_red
-    pin:
-      pca9554: pca9554a_device
-      number: 2
-      mode:
-        output: true
-      inverted: false
-    entity_category: diagnostic
-  - platform: gpio
-    name: "LED Blue"
-    id: led_blue
-    pin:
-      pca9554: pca9554a_device
-      number: 3
-      mode:
-        output: true
-      inverted: false
-    entity_category: diagnostic
-
   - platform: gpio
     name: "Micro Pump"
     id: pump
@@ -87,6 +64,36 @@ switch:
     restore_mode: RESTORE_DEFAULT_ON
     optimistic: True
     entity_category: config
+
+output:
+  - platform: gpio
+    id: led_red_output
+    pin:
+      pca9554: pca9554a_device
+      number: 2
+      mode:
+        output: true
+      inverted: false
+
+light:
+
+  # Call them "LED $color" instead of "$color LED" so that they sort better in
+  # Home Assistant.
+  - platform: binary
+    name: "LED Red"
+    id: led_red
+    output: led_red_output
+    entity_category: diagnostic
+  - platform: status_led
+    name: "LED Blue Status"
+    id: status_led_blue
+    pin:
+      pca9554: pca9554a_device
+      number: 3
+      mode:
+        output: true
+      inverted: false
+    entity_category: diagnostic
 
 sensor:
   - platform: duty_time
@@ -220,9 +227,9 @@ binary_sensor:
         - binary_sensor.is_on: soil_moisture_D_disconnected
     on_press:
       - script.execute: emergency_off
-      - switch.turn_on: led_red
+      - light.turn_on: led_red
     on_release:
-      - switch.turn_off: led_red
+      - light.turn_off: led_red
 
   - platform: template
     id: 'any_water_channel_open'
